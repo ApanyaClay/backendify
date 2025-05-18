@@ -1,0 +1,26 @@
+name: Deploy Laravel App
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+      - name: Install Dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Run Migrations
+        run: php artisan migrate --force
+      - name: Clear and Cache Config
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+      - name: Restart Queue
+        run: php artisan queue:restart
