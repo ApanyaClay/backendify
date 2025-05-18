@@ -24,3 +24,10 @@ jobs:
           php artisan view:cache
       - name: Restart Queue
         run: php artisan queue:restart
+      - name: Kirim Notifikasi ke Telegram
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="Workflow pada STB telah selesai dijalankan."
+        if: always():contentReference[oaicite:46]{index=46}
+
